@@ -10,12 +10,14 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 
+// allow x-www-form-urlencoded body type in postman requests
 app.use(
     bodyParser.urlencoded({
       extended: false
     })
   );
   app.use(bodyParser.json());
+
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 
