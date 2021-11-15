@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 
 
-const users = require("./routes/api/users");
+const users = require("./routes/api/Users");
 const PORT = process.env.PORT || 3001;
 
 const app = express();
