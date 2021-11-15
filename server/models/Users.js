@@ -14,6 +14,10 @@ const UserSchema = new Schema({
       type: String,
       required: true
     },
+    userType:{
+      type: Boolean,
+      required:false
+    }
     
   });
 // export the model

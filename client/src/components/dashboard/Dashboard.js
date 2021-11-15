@@ -9,6 +9,7 @@ class Dashboard extends Component {
   };
 render() {
     const { user } = this.props.auth;
+    console.log(user);
 return (
       <div style={{ height: "75vh" }} className="container valign-wrapper">
         <div className="row">
@@ -18,6 +19,7 @@ return (
               <p className="flow-text grey-text text-darken-1">
                 You are logged into a full-stack{" "}
                 <span style={{ fontFamily: "monospace" }}>MERN</span> app 👏
+                You are logged in as a {user.userType==true?"instructor":"student"}
               </p>
             </h4>
             <button

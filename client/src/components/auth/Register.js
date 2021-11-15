@@ -12,6 +12,7 @@ class Register extends Component {
       email: "",
       password: "",
       password2: "",
+      userType:false,
       errors: {}
     };
   }
@@ -31,15 +32,19 @@ componentDidMount() {
 onChange = e => {
     this.setState({ [e.target.id]: e.target.value });
   };
-onSubmit = e => {
+  onToggle=e=>{
+    this.setState({[e.target.id]:!this.state.userType});
+  }
+  onSubmit = e => {
     e.preventDefault();
-const newUser = {
-      name: this.state.name,
-      email: this.state.email,
-      password: this.state.password,
-      password2: this.state.password2
-    };
-this.props.registerUser(newUser, this.props.history); 
+    const newUser = {
+          name: this.state.name,
+          email: this.state.email,
+          password: this.state.password,
+          password2: this.state.password2,
+          userType: this.state.userType,
+        };
+    this.props.registerUser(newUser, this.props.history); 
   };
 render() {
     const { errors } = this.state;
@@ -116,7 +121,16 @@ return (
                 <label htmlFor="password2">Confirm Password</label>
                 <span className="red-text">{errors.password2}</span>
               </div>
-              <div className="col s12" style={{ paddingLeft: "11.250px" }}>
+              <div class="switch col s12">
+              <label>
+                Are you an instructor?
+                <input type="checkbox" id = "userType" checked={this.state.userType} onChange={this.onToggle}></input>
+                <span className="lever"></span>
+                
+              </label>
+            </div>
+              
+            {  <div className="col s12" style={{ paddingLeft: "11.250px" }}>
                 <button
                   style={{
                     width: "150px",
@@ -129,7 +143,7 @@ return (
                 >
                   Sign up
                 </button>
-              </div>
+              </div>}
             </form>
           </div>
         </div>

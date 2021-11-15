@@ -32,18 +32,19 @@ router.post("/register", (req, res) => {
             const newUser = new User({
                 name: req.body.name,
                 email: req.body.email,
-                password: req.body.password
+                password: req.body.password,
+                userType: req.body.userType,
             });
             bcrypt.genSalt(10, (err, salt) => {
                 bcrypt.hash(newUser.password, salt, (err, hash) => {
                   if (err) throw err;
                   newUser.password = hash;
-                  newUser
-                    .save()
+                  newUser.save()
                     .then(user => res.json(user))
                     .catch(err => console.log(err));
                 });
               });
+              return res.status(200).json({email:newUser.email, name:newUser.name, userType:newUser.userType})
 
         }
 
@@ -63,7 +64,7 @@ router.post("/login", (req, res) => {
       return res.status(400).json(errors);
     }
   const email = req.body.email;
-    const password = req.body.password;
+  const password = req.body.password;
   // Find user by email
     User.findOne({ email }).then(user => {
       // Check if user exists
@@ -77,7 +78,8 @@ router.post("/login", (req, res) => {
           // Create JWT Payload
           const payload = {
             id: user.id,
-            name: user.name
+            name: user.name,
+            userType:user.userType,
           };
         // Sign token
           jwt.sign(
