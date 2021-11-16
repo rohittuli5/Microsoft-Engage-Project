@@ -3,9 +3,10 @@ const path = require('path');
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-
+const fileUpload = require('express-fileupload')
 
 const users = require("./routes/api/Users");
+const exams = require("./routes/api/Exams");
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -17,7 +18,7 @@ app.use(
     })
   );
   app.use(bodyParser.json());
-
+app.use(fileUpload());
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 
@@ -27,7 +28,7 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 // Routes
 app.use("/api/users", users);
-
+app.use("/api/exams",exams);
 // DB Config
 const db = require("./config/keys").mongoURI;
 // Connect to MongoDB
