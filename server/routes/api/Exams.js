@@ -60,4 +60,14 @@ router.get("/schedule", (req,res) => {
     let ret = getSchedule(req).then(ret=>res.status(200).json(ret));
     return res;
 });
+
+router.get("/examsByProf", (req, res) => {
+    Exam.find({ prof_email: req.body.prof_email}, function (err, docs) {
+        if(err){
+            return res.status(400).json("Error Occoured");
+        }
+        return res.status(200).json(docs);
+    });
+});
+
 module.exports = router;
