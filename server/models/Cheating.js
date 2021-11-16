@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 // create new schema for an exam
-const ExamSchema = new Schema({
-    name: {
+const CheatingSchema = new Schema({
+    exam_name: {
       type: String,
       required: true
     },
@@ -10,19 +10,19 @@ const ExamSchema = new Schema({
       type: String,
       required: true
     },
-    exam_link: {
+    student_email: {
       type: String,
       required: true
     },
-    student_email_list:{
+    cheating_list:{
       type: [String],
-      required:false
+      required:true
     },
-    date_time:{
-        type: Date,
+    cheating_score:{
+        type: Number,
         required:true
     }
     
   });
 // export the model
-module.exports = User = mongoose.model("exams", ExamSchema);
+module.exports = User = mongoose.model("cheating", CheatingSchema);
