@@ -7,7 +7,7 @@ const fileUpload = require('express-fileupload')
 
 const users = require("./routes/api/Users");
 const exams = require("./routes/api/Exams");
-const cheating = require("./routes/api/Cheating");
+const student_takes_exam = require("./routes/api/StudentTakesExam");
 
 const PORT = process.env.PORT || 3001;
 
@@ -31,7 +31,7 @@ require("./config/passport")(passport);
 // Routes
 app.use("/api/users", users);
 app.use("/api/exams",exams);
-app.use("/api/cheating",cheating);
+app.use("/api/logs",cheating);
 // DB Config
 const db = require("./config/keys").mongoURI;
 // Connect to MongoDB

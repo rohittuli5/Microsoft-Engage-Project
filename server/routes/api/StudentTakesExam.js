@@ -3,7 +3,7 @@ const router = express.Router();
 
 const Cheating = require("../../models/Cheating");
 //const validateCheatingInput = require("../../validation/Cheating");
-router.post("/reportCheating", (req, res) =>{
+router.post("/update", (req, res) =>{
 
     // validate cheating data for errors
     //const {errors, isValid} = validateCheatingInput(req.body);
@@ -13,7 +13,7 @@ router.post("/reportCheating", (req, res) =>{
         return res.status(400).json(errors);
     }
     
-    Cheating.findOneAndUpdate({exam_name : req.body.exam_name, prof_email:req.body.prof_email, student_email:req.body.student_email}, req.body, {upsert: true}, function(err, doc) {
+    Cheating.findOneAndUpdate({exam_code: req.body.exam_code, student_email:req.body.student_email}, req.body, {upsert: true}, function(err, doc) {
         if (err){
             return res.status(400).json("Error Occoured");
         }
@@ -22,8 +22,8 @@ router.post("/reportCheating", (req, res) =>{
 
 });
 
-router.get("/allCheating", (req,res) => {
-    Cheating.find({ exam_name: req.body.exam_name, prof_email: req.body.prof_email}, function (err, docs) {
+router.get("/allData", (req,res) => {
+    Cheating.find({ exam_code: req.body.exam_code}, function (err, docs) {
         if(err){
             return res.status(400).json("Error Occoured");
         }

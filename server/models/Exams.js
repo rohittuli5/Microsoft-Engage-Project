@@ -14,17 +14,18 @@ const ExamSchema = new Schema({
       type: String,
       required: true
     },
-    student_email_list:{
-      type: [String],
-      required:false
-    },
+    
     date_time_start:{
         type: Date,
         required:true
     },
-    date_time_end:{
-      type:Date,
-      required:true,
+    duration:{
+      type: Number,
+      required:true
+    },
+    exam_code:{
+      type:String,
+      required:true
     }
     
   });
