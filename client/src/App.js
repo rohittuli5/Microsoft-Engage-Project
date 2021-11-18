@@ -14,7 +14,8 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import PrivateRoute from "./PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
-
+import TestPage from "./components/exam_page/Test_Page";
+import FullScreenAlert from "./components/exam_page/FullScreenAlert";
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
   // Set auth token header auth
@@ -43,6 +44,8 @@ class App extends Component {
             <Navbar />
             
             <Route exact path="/" component={Landing} />
+            <Route exact path="/test" component={TestPage} />
+            <Route exact path ="/fullscreenalert" component={FullScreenAlert} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
             <Switch>

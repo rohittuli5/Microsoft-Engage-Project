@@ -1,0 +1,57 @@
+
+.timer{
+  position: fixed;
+  top:50%;
+  margin-left: 15px;
+}
+.row {
+  display: flex;
+}
+
+/* Create two equal columns that sits next to each other */
+.column {
+  flex: 50%;
+  padding: 10px;
+  
+}
+
+.detect{
+  height: 100px;
+  width: 100px;
+}
+
+.button{
+  position:fixed;
+  top: 40%;
+  left: 5%;
+}
+
+.text{
+  position:absolute;
+  top:45%;
+  left: 10%;
+}
+
+#form{
+  top: 0;
+  right: 0;
+  position:fixed; 
+  height: 100%;
+  width: 50%;
+}
+
+.lame{
+  top:40%;
+  left:5%;
+  position: fixed;
+}
+
+.leftClass{
+top:30%;
+left:5%;
+position: fixed;
+}
+
+.givesize{
+font-size: large;
+}
