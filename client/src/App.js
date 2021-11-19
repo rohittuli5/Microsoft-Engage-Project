@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-
+import "./App.css"
 import { Provider } from "react-redux";
 import store from "./store";
 
@@ -40,7 +40,7 @@ class App extends Component {
     return (
       <Provider store={store}>
         <Router>
-          <div className="App">
+          <div className="App" >
             <Navbar />
             
             <Route exact path="/" component={Landing} />

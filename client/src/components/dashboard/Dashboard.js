@@ -13,7 +13,7 @@ render() {
     console.log(user);
     
 return (
-      <div>
+      <div >
       {user.userType===true?<ProfDashboard name={user.name} prof_email={user.email} logoutUser={this.props.logoutUser}/>:null}
       </div>
     );

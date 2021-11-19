@@ -12,6 +12,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import swal from 'sweetalert';
 import { logoutUser } from "../../actions/authActions";
+import LogsTable from "./LogsTable.js"
 import { connect } from "react-redux";
 
 function ProfDashboard(props) {
@@ -22,7 +23,7 @@ function ProfDashboard(props) {
     const [duration, setDuration] = useState(0);
     const [exam_code, setExamCode] = useState("");
     const [errorText, setErrorText] = useState("");
-
+    const [exam_code_search, setExamCodeSearch] = useState("");
     const axios = require("axios");
 
     function openExamDialog(){
@@ -97,7 +98,7 @@ function ProfDashboard(props) {
     
 
     return (
-        <div style={{ height: "75vh" }} className="container valign-wrapper">
+        <div style={{ height: "100%"}} className="container valign-wrapper">
           <div className="row">
             <div className="col s12 center-align">
               <h4>
@@ -130,6 +131,32 @@ function ProfDashboard(props) {
                 className="btn btn-large waves-effect waves-light hoverable blue accent-3"
               >
                 Logout
+              </button>
+              <br/>
+              <TextField
+                autoFocus
+                padding="10px"
+                margin="dense"
+                variant="standard"
+                id="exam_code_search"
+                label="Exam Code"
+                type="text"
+                required={true}
+                value={exam_code_search}
+                onChange={(e)=>setExamCodeSearch(e.target.value)}
+              />
+              <button
+                style={{
+                  width: "200px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginLeft:"10px",
+                  marginTop: "1rem"
+                }}
+                onClick={props.logoutUser}
+                className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+              >
+                Check Logs
               </button>
               <Dialog open={examDialogOpen} onClose={closeExamDialog} aria-labelledby="form-dialog-title" repositionOnUpdate={false}
               style={{ padding: '10px 10px 10px 10px' }}>
@@ -210,9 +237,15 @@ function ProfDashboard(props) {
                 </Button>
                 </DialogActions>
               </Dialog>
+              <br/>
+              <br/>
+              <LogsTable exam_code={exam_code_search}/>
             </div>
           </div>
+          
         </div>
+        
+
       );
 };
 ProfDashboard.propTypes = {
