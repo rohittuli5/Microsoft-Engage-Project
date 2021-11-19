@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 // create new schema for an exam
-const StudentTakesExamSchema = new Schema({
+const LogsSchema = new Schema({
     exam_name: {
       type: String,
       required: true
@@ -48,4 +48,4 @@ const StudentTakesExamSchema = new Schema({
     
   });
 // export the model
-module.exports = User = mongoose.model("cheating", CheatingSchema);
+module.exports = User = mongoose.model("logs", LogsSchema);

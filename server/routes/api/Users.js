@@ -80,6 +80,7 @@ router.post("/login", (req, res) => {
             id: user.id,
             name: user.name,
             userType:user.userType,
+            email:user.email,
           };
         // Sign token
           jwt.sign(
