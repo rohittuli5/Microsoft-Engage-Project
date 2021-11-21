@@ -75,11 +75,13 @@ function ProfDashboard(props) {
           })
           .then(function (response) {
             console.log(response);
+            swal("Exam has been created. Your exam code has been copied to your clipboard, please share it with the students.");
           })
           .catch(function (error) {
             console.log(error);
+            swal("Some error occoured in creating the exam");
           });
-        swal("Exam has been created. Your exam code has been copied to your clipboard, please share it with the students.");
+        
         closeExamDialog();
         
     }
@@ -158,6 +160,8 @@ function ProfDashboard(props) {
               >
                 Check Logs
               </button>
+
+              
               <Dialog open={examDialogOpen} onClose={closeExamDialog} aria-labelledby="form-dialog-title" repositionOnUpdate={false}
               style={{ padding: '10px 10px 10px 10px' }}>
               <DialogTitle id="form-dialog-title">Create Exam</DialogTitle>

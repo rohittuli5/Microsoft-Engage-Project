@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
 import ProfDashboard from "./ProfDashboard";
+import StudentDashboard from "./StudentDashboard";
 class Dashboard extends Component {
   onLogoutClick = e => {
     e.preventDefault();
@@ -14,7 +15,8 @@ render() {
     
 return (
       <div >
-      {user.userType===true?<ProfDashboard name={user.name} prof_email={user.email} logoutUser={this.props.logoutUser}/>:null}
+      {user.userType===true?<ProfDashboard name={user.name} prof_email={user.email} logoutUser={this.props.logoutUser}/>:
+      <StudentDashboard name={user.name} student_email={user.email} logoutUser={this.props.logoutUser}/>}
       </div>
     );
   }

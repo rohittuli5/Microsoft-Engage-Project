@@ -42,6 +42,18 @@ router.post("/createExam", (req, res) =>{
 
 });
 
+router.get("/examByCode", (req, res) => {
+    const req_exam_code=req.query.exam_code;
+    Exam.findOne({ exam_code : req_exam_code}).then(exam=>{
+        
+        if(!exam){
+            return res.status(400).json("Exam Code is invalid");
+        }
+        return res.status(200).json(exam);
+    });
+}); 
+
+
 router.get("/examsByProf", (req, res) => {
     Exam.find({ prof_email: req.body.prof_email}, function (err, docs) {
         if(err){

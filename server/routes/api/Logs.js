@@ -22,8 +22,9 @@ router.post("/update", (req, res) =>{
 
 });
 
-router.get("/allData", (req,res) => {
+router.post("/allData", (req,res) => {
     Logs.find({ exam_code: req.body.exam_code}, function (err, docs) {
+        
         if(err){
             return res.status(400).json("Error Occoured");
         }

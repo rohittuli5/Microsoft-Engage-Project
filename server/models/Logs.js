@@ -10,6 +10,10 @@ const LogsSchema = new Schema({
       type: String,
       required:true,
     },
+    student_name:{
+      type: String,
+      required:true,
+    },
     student_email: {
       type: String,
       required: true
