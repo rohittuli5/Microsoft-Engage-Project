@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import { connect } from "react-redux";
 import swal from 'sweetalert';
 import { logoutUser } from "../../actions/authActions";
-
+import { Redirect, useHistory } from "react-router-dom";
 
 function StudentDashboard(props) {
 
@@ -13,7 +13,7 @@ function StudentDashboard(props) {
     const [error, setError] = useState("");
     const axios = require("axios");
     const moment = require("moment");
-
+    const history = useHistory();
     function checkExamCode(){
         let payload = { exam_code: exam_code};
         const params = new URLSearchParams(payload);
@@ -28,9 +28,27 @@ function StudentDashboard(props) {
             console.log(exam_date_time_start);
             console.log(exam_date_time_end);
             console.log(curr_date_time);
-            
+
             if(curr_date_time >= exam_date_time_start && curr_date_time < exam_date_time_end){
+                var diff = Math.abs(exam_date_time_end - curr_date_time);
+                var diff_mins = Math.floor((diff/1000)/60);
+                var diff_secs = Math.floor(diff/1000)%60;
+                console.log(diff, diff_mins, diff_secs);
                 setError("Starting exam");
+                let data={
+                    exam_code: exam_code,
+                    student_name: props.name,
+                    student_email: props.student_email,
+                    exam_link: response.data.exam_link,
+                    prof_email: response.data.prof_email,
+                    mins_left: diff_mins,
+                    secs_left: diff_secs,
+                };
+                history.push({ 
+                    pathname: '/test',
+                    state: data
+                   })
+                 
             }
             else if(curr_date_time >= exam_date_time_end){
                 setError("Exam has already ended");

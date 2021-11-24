@@ -1,0 +1,33 @@
+.my_container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "detect detect test test"
+      "detect detect test test"
+      "time_rem name test test"
+      "instructions exit test test";
+  }
+  
+  .detect { grid-area: detect; width: 50%; 
+    height: 40%; align-items: center; }
+  
+  .time_rem { grid-area: time_rem;}
+  
+  .name { grid-area: name;}
+  
+  .instructions { grid-area: instructions;}
+  
+  .exit { grid-area: exit; }
+  
+  .test { grid-area: test; }
+  
+  #form{
+    top: 7%;
+    right: 0;
+    position:fixed; 
+    height: 90%;
+    width: 50%;
+  }  

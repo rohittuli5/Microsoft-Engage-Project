@@ -19,8 +19,8 @@ export default class Detection extends React.Component {
           audio: false,
           video: {
             facingMode: "user",
-            width: 500,
-            height: 300
+            width: 800,
+            height: 400
           }
         })
         .then(stream => {
@@ -131,14 +131,14 @@ export default class Detection extends React.Component {
           playsInline
           muted
           ref={this.videoRef}
-          width="500"
-          height="300"
+          width= "800"
+          height= "400"
         />
         <canvas
           className="size"
           ref={this.canvasRef}
-          width="500"
-          height="300"
+          width="800"
+          height="400"
         />
       </div>
     );

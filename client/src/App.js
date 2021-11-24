@@ -14,7 +14,7 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import PrivateRoute from "./PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
-import TestPage from "./components/exam_page/Test_Page";
+import TestPage from "./components/exam_page/TestPage";
 import FullScreenAlert from "./components/exam_page/FullScreenAlert";
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {

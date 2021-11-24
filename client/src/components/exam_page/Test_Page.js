@@ -12,10 +12,9 @@ import Posenet from './Pose_Detection';
 
 
 const TestPage = (props) => {
-
-  var form_link = "www.google.com";
-  var name= "Default User";
-  var exam_id = "Default id";
+  var form_link = props.location.state.exam_link;
+  var name= props.location.state.student_name;
+  var exam_id = props.location.state.exam_id;
 //   const [tabChange, setTabChange]= useState(0);
 //   const [fullScreenExit, setFullScreenExit]= useState(0);
 //   const [altPress, setAltPress]= useState(0);
@@ -204,11 +203,11 @@ var get_time=0, get_sec=0;
       if (seconds > 0) {
         setSeconds(seconds - 1);
         var currectSec = seconds;
-         sessionStorage.setItem("exam_sec", currectSec);
+         //sessionStorage.setItem("exam_sec", currectSec);
       }
       else {
          var currectTime = minutes-1;
-          sessionStorage.setItem("exam_timer", currectTime);
+          //sessionStorage.setItem("exam_timer", currectTime);
           setMinutes(minutes - 1);
           setSeconds(59);
          
@@ -243,6 +242,7 @@ var get_time=0, get_sec=0;
         </div>
 
         <div className="lame">
+        {console.log(name)}
           <h3 align="left">Name:  <span style={{ fontSize: '20px' }} > {name}</span></h3>
           <h3 align="left">Exam ID:  <span style={{ fontSize: '20px' }} > {exam_id}</span></h3>
         </div>
