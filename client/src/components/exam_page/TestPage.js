@@ -20,8 +20,7 @@ export default function TestPage(props){
     const [minutes, setMinutes] = useState(parseInt(props.location.state.mins_left));
     const [seconds, setSeconds] = useState(parseInt(props.location.state.secs_left));
     const [tab_change, setTabChange] = useState(0);
-    const [ctrl_press, setCtrlPress] = useState(0);
-    const [alt_press, setAltPress] = useState(0);
+    const [key_press, setKeyPress] = useState(0);
     const [full_screen_exit, setFullScreenExit] = useState(0);
     const [mobile_phone_found, setMobilePhoneFound] = useState(false);
     const [prohibited_object_found, setProhibitedObjectFound] = useState(false);
@@ -48,15 +47,18 @@ export default function TestPage(props){
             exam_code: exam_id,
             student_name: student_name,
             student_email: student_email,
-            key_press_count: alt_press + ctrl_press,
+            key_press_count: key_press,
             tab_change_count: tab_change,
             mobile_found: mobile_phone_found,
             face_not_visible: face_not_visible,
             prohibited_object_found: prohibited_object_found,
             multiple_faces_found: multiple_faces_visible,
-        }). then(function (response){
+        })
+        .then(function (response){
+
           console.log(response);
-        }).catch(function (error){
+        })
+        .catch(function (error){
           console.log(error);
         })
         
@@ -66,10 +68,12 @@ export default function TestPage(props){
         axios.get('/api/logs/logByEmail?exam_code='+exam_id+'&student_email='+student_email)
         .then(function (response) {
             console.log(response);
-            setAltPress(parseInt(response.data.alt_press_count));
-            setCtrlPress(parseInt(response.data.ctrl_press_count));
+            setKeyPress(parseInt(response.data.key_press_count));
             setTabChange(parseInt(response.data.tab_change_count));
-            
+            setMobilePhoneFound(response.data.mobile_found);
+            setMultipleFacesVisible(response.data.multiple_faces_found);
+            setProhibitedObjectFound(response.data.prohibited_object_found);
+            setFaceNotVisible(response.data.face_not_visible);
         })
         .catch(function (err) {
             console.log(err);
@@ -89,12 +93,12 @@ export default function TestPage(props){
     function handleKeyPress(event){
       
         if (event.altKey) {
-            setAltPress(alt_press+1);
+            setKeyPress(key_press+1);
             swal('Alt Key Press Detected',"Action has been Recorded", "error");
             return false;
             }
         else if(event.ctrlKey) {
-            setCtrlPress(ctrl_press+1);
+            setKeyPress(key_press+1);
             swal('Ctrl Key Press Detected',"Action has been Recorded", "error");
             return false;
         }

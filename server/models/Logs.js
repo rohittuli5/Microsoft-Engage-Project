@@ -36,6 +36,11 @@ const LogsSchema = new Schema({
       required:false,
       default:false,
     },
+    face_not_visible: {
+      type: Boolean,
+      required: true,
+      default:false,
+    },
     multiple_faces_found: {
       type: Boolean,
       required: true,
