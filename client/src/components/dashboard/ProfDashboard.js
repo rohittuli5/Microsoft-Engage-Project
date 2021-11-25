@@ -135,31 +135,9 @@ function ProfDashboard(props) {
                 Logout
               </button>
               <br/>
-              <TextField
-                autoFocus
-                padding="10px"
-                margin="dense"
-                variant="standard"
-                id="exam_code_search"
-                label="Exam Code"
-                type="text"
-                required={true}
-                value={exam_code_search}
-                onChange={(e)=>setExamCodeSearch(e.target.value)}
-              />
-              <button
-                style={{
-                  width: "200px",
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px",
-                  marginLeft:"10px",
-                  marginTop: "1rem"
-                }}
-                onClick={props.logoutUser}
-                className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-              >
-                Check Logs
-              </button>
+              <br/>
+              <LogsTable exam_code={exam_code_search}/>
+              
 
               
               <Dialog open={examDialogOpen} onClose={closeExamDialog} aria-labelledby="form-dialog-title" repositionOnUpdate={false}
@@ -241,9 +219,7 @@ function ProfDashboard(props) {
                 </Button>
                 </DialogActions>
               </Dialog>
-              <br/>
-              <br/>
-              <LogsTable exam_code={exam_code_search}/>
+              
             </div>
           </div>
           

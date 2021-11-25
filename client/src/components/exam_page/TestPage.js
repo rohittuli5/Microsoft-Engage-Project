@@ -51,6 +51,7 @@ export default function TestPage(props){
             key_press_count: alt_press + ctrl_press,
             tab_change_count: tab_change,
             mobile_found: mobile_phone_found,
+            face_not_visible: face_not_visible,
             prohibited_object_found: prohibited_object_found,
             multiple_faces_found: multiple_faces_visible,
         }). then(function (response){

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -54,14 +55,15 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-    { id: 's_no', numeric: false, disablePadding: true, label: 'S. No.' },
+  { id: 's_no', numeric: false, disablePadding: true, label: 'S. No.' },
   { id: 'student_name', numeric: false, disablePadding: false, label: 'Name' },
   { id: 'student_email', numeric: false, disablePadding: false, label: 'Email' },
   { id: 'tab_change_count', numeric: true, disablePadding: false, label: 'Tab Changes' },
-  { id: 'ctrl_press_count', numeric: true, disablePadding: false, label: 'CTRL Press' },
-  { id: 'full_screen_exit_count', numeric: true, disablePadding: false, label: 'Full Screen Exit' },
-  { id: 'mobile_found_count', numeric: true, disablePadding: false, label: 'Mobile Found Count' },
-  { id: 'prohibited_object_found_count', numeric: true, disablePadding: false, label: 'Prohibited Object Found' },
+  { id: 'key_press_count', numeric: true, disablePadding: false, label: 'Prohibited Key Press' },
+  { id: 'face_not_visible', numeric: false, disablePadding: false, label: 'Face Not Visible' },
+  { id: 'multiple_faces_found', numeric: false, disablePadding: false, label: 'Multiple Faces Detected' },
+  { id: 'mobile_found', numeric: false, disablePadding: false, label: 'Mobile Found' },
+  { id: 'prohibited_object_found', numeric: false, disablePadding: false, label: 'Prohibited Object Found' },
 ];
 
 function EnhancedTableHead(props) {
@@ -167,7 +169,10 @@ EnhancedTableToolbar.propTypes = {
 };
 
 
-export default function LogsTable(props) {
+export default function LogsTable() {
+  const [exam_code, setExamCode] = React.useState("");
+  const [visibility, setVisibility] = React.useState(false);
+  const [error_text, setErrorText] = React.useState("");
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('company');
   const [selected, setSelected] = React.useState([]);
@@ -180,47 +185,47 @@ export default function LogsTable(props) {
 
 
 
-  const getData=async (exam_code_val)=>{
-    console.log(props.exam_code);
+  const getData=async ()=>{
     try {
-      const response = await axios.post('/api/logs/allData',{exam_code:exam_code_val});
-      console.log(response);
+      const response = await axios.post('/api/logs/allData',{exam_code:exam_code});
+
+      if(response.data.length === 0){
+        setErrorText("Either there are no records for the exam or the exam code is Invalid!");
+        setVisibility(false);
+        setInterns([]);
+        setRows([]);
+        return;
+      }
+      else{
+
+        setErrorText("");
+        setVisibility(true);
+      }
       var curr_logs=[];
 
       for(var i=0;i<response.data.length;i++){
       
         var obj=new Object();
         obj.s_no=i+1;
-        obj.student_name=response.data[i].student_name;
-        obj.student_email=response.data[i].student_email;
-        obj.tab_change_count=response.data[i].tab_change_count;
-        obj.ctrl_press_count=response.data[i].ctrl_press_count;
-        obj.full_screen_exit_count=response.data[i].full_screen_exit_count;
-        obj.mobile_found_count=response.data[i].mobile_found_count;
-        obj.prohibited_object_found_count=response.data[i].prohibited_object_found_count;
+        obj.student_name = response.data[i].student_name;
+        obj.student_email = response.data[i].student_email;
+        obj.tab_change_count = response.data[i].tab_change_count;
+        obj.key_press_count = response.data[i].key_press_count;
+        obj.face_not_visible = response.data[i].face_not_visible;
+        obj.multiple_faces_found = response.data[i].multiple_faces_found;
+        obj.mobile_found = response.data[i].mobile_found;
+        obj.prohibited_object_found = response.data[i].prohibited_object_found;
         curr_logs=[...curr_logs,obj]
         
       }
       setInterns(curr_logs);
-      console.log(curr_logs);
       setRows(curr_logs);
     }
     catch(err){
       console.error(err.message)
     }
   }
-  
- 
-React.useEffect(()=>{
-  getData();
-  const interval=setInterval(()=>{
-    var exam_code_val=props.exam_code;
-    getData(exam_code_val)
-   },2000)
-     
-     
-   return()=>clearInterval(interval)
-},[props.exam_code]);
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -268,21 +273,50 @@ React.useEffect(()=>{
   const isSelected = (company) => selected.indexOf(company) !== -1;
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
   const formatValue = (value) => value.toFixed(0);
+
   return (
     
 
     <Box sx={{ width: '100%' }}>
-    <Paper sx={{ width: '100%', mb: 2 }}>
+    <TextField
+      autoFocus
+      padding="10px"
+      margin="dense"
+      variant="standard"
+      id="exam_code"
+      label="Exam Code"
+      type="text"
+      required={true}
+      value={exam_code}
+      onChange={(e)=>setExamCode(e.target.value)}
+    />
+
+    <button
+      style={{
+        width: "200px",
+        borderRadius: "3px",
+        letterSpacing: "1.5px",
+        marginLeft:"10px",
+        marginTop: "1rem"
+      }}
+      onClick={getData}
+      className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+    >
+      Check Logs
+    </button>
+
+    <br/>
+
+    <p style={{color:"red", textAlign:"center"}}> {error_text} </p>
+
+    {visibility === true && (<Paper sx={{ width: '100%', mb: 2 }}>
+      
       <SearchBar
       value={searched}
       onChange={(searchVal) => requestSearch(searchVal)}
       onCancelSearch={() => cancelSearch()}
       style={{border:'3px solid rgba(0, 0, 0, 0.05)'}}
     />
-    <Grid container style={{backgroundColor:'#595e5a', color:"white"}}>
-    
-      
-      </Grid>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer >
           <Table
@@ -317,12 +351,12 @@ React.useEffect(()=>{
                       </TableCell>
                       <TableCell align="left">{row.student_name}</TableCell>
                       <TableCell align="left">{row.student_email}</TableCell>
-                      <TableCell align="left">{row.tab_change_count}</TableCell>
-                      <TableCell align="right">{row.ctrl_press_count}</TableCell>
-                      <TableCell align="right">{row.alt_press_count}</TableCell>
-                      <TableCell align="right">{row.full_screen_exit_count}</TableCell>
-                      <TableCell align="right">{row.mobile_found_count}</TableCell>
-                      <TableCell align="right">{row.prohibited_object_found_count}</TableCell>
+                      <TableCell align="right">{row.tab_change_count}</TableCell>
+                      <TableCell align="right">{row.key_press_count}</TableCell>
+                      <TableCell align="left">{row.face_not_visible === true? "Yes" : "No"}</TableCell>
+                      <TableCell align="left">{row.multiple_faces_found === true ? "Yes" : "No"}</TableCell>
+                      <TableCell align="left">{row.mobile_found === true ?"Yes" : "No"}</TableCell>
+                      <TableCell align="left">{row.prohibited_object_found === true ?"Yes" : "No"}</TableCell>
                       {/*<TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewvulnerabilities(e,row.scan_id)}>View vulnerabilities</Button></TableCell>
                   <TableCell align="left"><Button variant="contained" color="secondary" onClick={(e)=>handleRescan(e,row.scan_id, row.type)}>Rescan</Button></TableCell>*/}
                       
@@ -346,7 +380,7 @@ React.useEffect(()=>{
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
-      </Paper>
+      </Paper>)}
       </Box>
 
   );
