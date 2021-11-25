@@ -23,17 +23,42 @@ export default function TestPage(props){
     const [ctrl_press, setCtrlPress] = useState(0);
     const [alt_press, setAltPress] = useState(0);
     const [full_screen_exit, setFullScreenExit] = useState(0);
+    const [mobile_phone_found, setMobilePhoneFound] = useState(false);
+    const [prohibited_object_found, setProhibitedObjectFound] = useState(false);
+    const [face_not_visible, setFaceNotVisible] = useState(false);
+    const [multiple_faces_visible, setMultipleFacesVisible] = useState(false);
     const [checkedPrevLogs, setCheckedPrevLogs] = useState(false);
+    
+
+    function update_mobile_phone_found(){
+      setMobilePhoneFound(true);
+    }
+    function update_prohibited_object_found(){
+      setProhibitedObjectFound(true);
+    }
+    function update_face_not_visible(){
+      setFaceNotVisible(true);
+    }
+    function update_multiple_faces_visible(){
+      setMultipleFacesVisible(true);
+    }
+
     function sendLogsToServer(){
-        let response = axios.post('/api/logs/update',{
+      axios.post('/api/logs/update',{
             exam_code: exam_id,
             student_name: student_name,
             student_email: student_email,
-            alt_press_count: alt_press,
-            ctrl_press_count: ctrl_press,
+            key_press_count: alt_press + ctrl_press,
             tab_change_count: tab_change,
-        });
-        console.log(response);
+            mobile_found: mobile_phone_found,
+            prohibited_object_found: prohibited_object_found,
+            multiple_faces_found: multiple_faces_visible,
+        }). then(function (response){
+          console.log(response);
+        }).catch(function (error){
+          console.log(error);
+        })
+        
     }
     
     function getPreviousLogs(){
@@ -53,7 +78,6 @@ export default function TestPage(props){
         if (document.hidden) {
             // the page is hidden
             setTabChange(tab_change+1);
-            sendLogsToServer();
             swal("Changed Tab Detected", "Action has been Recorded", "error");
             
             
@@ -62,15 +86,14 @@ export default function TestPage(props){
         }
       }
     function handleKeyPress(event){
+      
         if (event.altKey) {
             setAltPress(alt_press+1);
-            sendLogsToServer();
             swal('Alt Key Press Detected',"Action has been Recorded", "error");
             return false;
             }
         else if(event.ctrlKey) {
             setCtrlPress(ctrl_press+1);
-            sendLogsToServer();
             swal('Ctrl Key Press Detected',"Action has been Recorded", "error");
             return false;
         }
@@ -81,24 +104,27 @@ export default function TestPage(props){
     }
 
     useEffect(() => {
-        if(!checkedPrevLogs){
-            getPreviousLogs();
-            setCheckedPrevLogs(true);
-        }
+        
+
         // initiate the event handler
         document.addEventListener("visibilitychange", handleVisibilityChange, false);
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
           }, false);
-        document.getElementById('form').addEventListener('keydown',handleKeyPress, false);
-          
+        document.addEventListener('keydown',handleKeyPress, false);
+        
+        if(!checkedPrevLogs){
+          getPreviousLogs();
+          setCheckedPrevLogs(true);
+      }
+
         // this will clean up the event every time the component is re-rendered
         return function cleanup() {
           document.removeEventListener("visibilitychange", handleVisibilityChange);
           document.removeEventListener('contextmenu', function (e) {
             e.preventDefault();
           }, false);
-          document.getElementById('form').removeEventListener('keydown',(event)=>handleKeyPress(event), false);
+          document.removeEventListener('keydown',(event)=>handleKeyPress(event), false);
         }
       })
 
@@ -107,15 +133,10 @@ export default function TestPage(props){
         let myInterval = setInterval(() => {
           if (seconds > 0) {
             setSeconds(seconds - 1);
-            var currectSec = seconds;
-             //sessionStorage.setItem("exam_sec", currectSec);
           }
           else {
-             var currectTime = minutes-1;
-              //sessionStorage.setItem("exam_timer", currectTime);
               setMinutes(minutes - 1);
               setSeconds(59);
-             
             }
     
             if (minutes === 1 && seconds === 0) {
@@ -123,11 +144,10 @@ export default function TestPage(props){
             }
     
           if (seconds <= 0 && minutes <= 0) {
-             //this.props.history.push('/thankyou');
              <Redirect to='/thankyou'/>
             }
-        
-    
+          sendLogsToServer();
+      
       },1000);
       return () => {
         clearInterval(myInterval);
@@ -144,7 +164,7 @@ export default function TestPage(props){
       
 
         <div className="detect">
-          <Detection/>
+          <Detection MobilePhone={update_mobile_phone_found} ProhibitedObject={update_prohibited_object_found} FaceNotVisible={update_face_not_visible} MultipleFacesVisible={update_multiple_faces_visible}/>
           
         </div>
 

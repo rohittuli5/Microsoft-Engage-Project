@@ -2,10 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 // create new schema for an exam
 const LogsSchema = new Schema({
-    exam_name: {
-      type: String,
-      required: true
-    },
+    
     exam_code: {
       type: String,
       required:true,
@@ -24,30 +21,25 @@ const LogsSchema = new Schema({
       required:true,
       default:0,
     },
-    ctrl_press_count: {
+    key_press_count: {
       type:Number,
       required:true,
       default:0,
     },
-    alt_press_count: {
-      type:Number,
+    mobile_found: {
+      type:Boolean,
       required:true,
-      default:0,
+      default:false,
     },
-    full_screen_exit_count: {
-      type:Number,
-      required:true,
-      default:0,
+    prohibited_object_found: {
+      type:Boolean,
+      required:false,
+      default:false,
     },
-    mobile_found_count: {
-      type:Number,
-      required:true,
-      default:0,
-    },
-    prohibited_object_found_count: {
-      type:Number,
-      required:true,
-      default:0,
+    multiple_faces_found: {
+      type: Boolean,
+      required: true,
+      default:false,
     }
     
   });

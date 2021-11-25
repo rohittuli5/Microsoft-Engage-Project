@@ -4,15 +4,16 @@ import swal from 'sweetalert';
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import "@tensorflow/tfjs";
 import "./Detections.css";
-var count_facedetect = 0;
 
 
 export default class Detection extends React.Component {
   videoRef = React.createRef();
   canvasRef = React.createRef();
-
+  constructor(props) {
+    super(props);
+    this.state = {count: 0};
+  }
   componentDidMount() {
-
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       const webCamPromise = navigator.mediaDevices
         .getUserMedia({
@@ -38,15 +39,16 @@ export default class Detection extends React.Component {
           this.detectFrame(this.videoRef.current, values[0]);
         })
         .catch(error => {
-          //console.error(error);
+          console.error(error);
         });
     }
   }
 
   detectFrame = (video, model) => {
     model.detect(video).then(predictions => {
-      if (this.canvasRef.current) {
 
+      if (this.canvasRef.current) {
+        
         this.renderPredictions(predictions);
         requestAnimationFrame(() => {
           this.detectFrame(video, model);
@@ -56,14 +58,12 @@ export default class Detection extends React.Component {
       }
     });
   };
-
+  
   renderPredictions = predictions => {
-    //var count=100;
     const ctx = this.canvasRef.current.getContext("2d");
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    // Font options.
-    const font = "16px sans-serif";
-    ctx.font = font;
+    // Setting font and text location for prediction.
+    ctx.font = "16px sans-serif";
     ctx.textBaseline = "top";
     predictions.forEach(prediction => {
 
@@ -78,47 +78,55 @@ export default class Detection extends React.Component {
       // Draw the label background.
       ctx.fillStyle = "#00FFFF";
       const textWidth = ctx.measureText(prediction.class).width;
-      const textHeight = parseInt(font, 10); // base 10
+      const textHeight = parseInt("16px sans-serif", 10); // base 10
       ctx.fillRect(x, y, textWidth + 8, textHeight + 8);
       
-      var multiple_face = 0;
-      for (let i = 0; i < predictions.length; i++) {
-
-        //Face,object detection
-        if (predictions[i].class === "cell phone") {
-          swal("Cell Phone Detected", "Action has been Recorded", "error");
-          count_facedetect = count_facedetect + 1;
-        }
-        else if (predictions[i].class === "book") {
-          swal("Book Detected", "Action has been Recorded", "error");
-          count_facedetect = count_facedetect + 1;
-        }
-        else if (predictions[i].class === "laptop") {
-          swal("Laptop Detected", "Action has been Recorded", "error");
-          count_facedetect = count_facedetect + 1;
-        }
-        else if (predictions[i].class !== "person") {
-          swal("Face Not Visible", "Action has been Recorded", "error");
-          count_facedetect = count_facedetect + 1;
-        }
-      }
     });
-
     predictions.forEach(prediction => {
       const x = prediction.bbox[0];
       const y = prediction.bbox[1];
-      //console.log(predictions)
       // Draw the text last to ensure it's on top.
       ctx.fillStyle = "#000000";
-      //console.log(prediction.class);
 
       if (prediction.class === "person" || prediction.class === "cell phone" || prediction.class === "book" || prediction.class === "laptop") {
         ctx.fillText(prediction.class, x, y);
       }
     });
-    //console.log("final")
-    //console.log(count_facedetect)
-    sessionStorage.setItem("count_facedetect", count_facedetect);
+    
+    var faces = 0;
+    
+      if (predictions.length === 0 && this.state.count <50){
+        this.state.count++;
+      }
+      else if (predictions.length === 0) {
+        this.state.count=0;
+        swal("Face Not Visible", "Action has been Recorded", "error");
+        this.props.FaceNotVisible();
+      }
+
+      for (let i = 0; i < predictions.length; i++) {
+
+        if (predictions[i].class === "cell phone") {
+          this.props.MobilePhone();
+          swal("Cell Phone Detected", "Action has been Recorded", "error");
+          
+        }
+        else if (predictions[i].class === "book" || predictions[i].class === "laptop") {
+          this.props.ProhibitedObject();
+          swal("Prohibited Object Detected", "Action has been Recorded", "error");
+          
+        }
+        
+        else if (predictions[i].class === "person") {
+          faces += 1;
+          this.state.count=0;
+        }
+
+      }
+      if(faces > 1){
+        this.props.MultipleFacesVisible();
+        swal(faces.toString()+" people detected", "Action has been recorded", "error");
+      }
 
   };
 
