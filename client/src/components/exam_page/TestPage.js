@@ -23,7 +23,7 @@ export default function TestPage(props){
     const [ctrl_press, setCtrlPress] = useState(0);
     const [alt_press, setAltPress] = useState(0);
     const [full_screen_exit, setFullScreenExit] = useState(0);
-
+    const [checkedPrevLogs, setCheckedPrevLogs] = useState(false);
     function sendLogsToServer(){
         let response = axios.post('/api/logs/update',{
             exam_code: exam_id,
@@ -36,6 +36,19 @@ export default function TestPage(props){
         console.log(response);
     }
     
+    function getPreviousLogs(){
+        axios.get('/api/logs/logByEmail?exam_code='+exam_id+'&student_email='+student_email)
+        .then(function (response) {
+            console.log(response);
+            setAltPress(parseInt(response.data.alt_press_count));
+            setCtrlPress(parseInt(response.data.ctrl_press_count));
+            setTabChange(parseInt(response.data.tab_change_count));
+            
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+    }
     function handleVisibilityChange() {
         if (document.hidden) {
             // the page is hidden
@@ -68,13 +81,16 @@ export default function TestPage(props){
     }
 
     useEffect(() => {
-        
+        if(!checkedPrevLogs){
+            getPreviousLogs();
+            setCheckedPrevLogs(true);
+        }
         // initiate the event handler
         document.addEventListener("visibilitychange", handleVisibilityChange, false);
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
           }, false);
-        document.addEventListener('keydown',handleKeyPress, false);
+        document.getElementById('form').addEventListener('keydown',handleKeyPress, false);
           
         // this will clean up the event every time the component is re-rendered
         return function cleanup() {
@@ -82,7 +98,7 @@ export default function TestPage(props){
           document.removeEventListener('contextmenu', function (e) {
             e.preventDefault();
           }, false);
-          document.removeEventListener('keydown',(event)=>handleKeyPress(event), false);
+          document.getElementById('form').removeEventListener('keydown',(event)=>handleKeyPress(event), false);
         }
       })
 
