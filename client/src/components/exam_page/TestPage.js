@@ -2,13 +2,11 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import Detection from './Object_Detection';
 import { Button } from '@mui/material';
-import DetectRTC from 'detectrtc';
 import swal from 'sweetalert';
 // import exam_timer from './formvalid';
 // import formvalid from './formvalid';
 import "./ExamPage.css";
-import { Redirect } from "react-router-dom";
-import Posenet from './Pose_Detection';
+import { Redirect, useHistory } from "react-router-dom";
 import axios from 'axios';
 
 export default function TestPage(props){
@@ -28,6 +26,7 @@ export default function TestPage(props){
     const [multiple_faces_visible, setMultipleFacesVisible] = useState(false);
     const [checkedPrevLogs, setCheckedPrevLogs] = useState(false);
     
+    const history = useHistory();
 
     function update_mobile_phone_found(){
       setMobilePhoneFound(true);
@@ -96,7 +95,7 @@ export default function TestPage(props){
             setKeyPress(key_press+1);
             swal('Alt Key Press Detected',"Action has been Recorded", "error");
             return false;
-            }
+        }
         else if(event.ctrlKey) {
             setKeyPress(key_press+1);
             swal('Ctrl Key Press Detected',"Action has been Recorded", "error");
@@ -135,24 +134,24 @@ export default function TestPage(props){
 
 
     useEffect(() => {
-        let myInterval = setInterval(() => {
-          if (seconds > 0) {
-            setSeconds(seconds - 1);
+      let myInterval = setInterval(() => {
+        if (seconds > 0) {
+          setSeconds(seconds - 1);
+        }
+        else {
+            setMinutes(minutes - 1);
+            setSeconds(59);
           }
-          else {
-              setMinutes(minutes - 1);
-              setSeconds(59);
-            }
+  
+          if (minutes === 1 && seconds === 0) {
+            swal("Only 1 Minute Left, Please Submit or attendance wont be marked");
+          }
+  
+        if (seconds <= 0 && minutes <= 0) {
+            <Redirect to='/thankyou'/>
+          }
+        sendLogsToServer();
     
-            if (minutes === 1 && seconds === 0) {
-              swal("Only 1 Minute Left, Please Submit or attendance wont be marked");
-            }
-    
-          if (seconds <= 0 && minutes <= 0) {
-             <Redirect to='/thankyou'/>
-            }
-          sendLogsToServer();
-      
       },1000);
       return () => {
         clearInterval(myInterval);
@@ -162,7 +161,8 @@ export default function TestPage(props){
     
 
     function handleSubmit(){
-        
+        swal("Thank You for taking the exam. Logs have been shared with your professor");
+        history.push('/dashboard');
     }
     return (
         <div style={{ height: "100%"}} className="my_container" id="my_container">

@@ -6,7 +6,15 @@ import {
   SET_CURRENT_USER,
   USER_LOADING
 } from "./types";
-// Register User
+
+/**
+ * Registers the user by calling an API to the backend, dispatches errors 
+ * if any
+ * 
+ * @param {Object} userData 
+ * @param {useHistory} history 
+ * 
+ */
 export const registerUser = (userData, history) => dispatch => {
   axios
     .post("/api/users/register", userData)
@@ -18,15 +26,22 @@ export const registerUser = (userData, history) => dispatch => {
       })
     );
 };
-// Login - get user token
+
+/**
+ * Logs in the user by calling API to the backend, recieves token, decodes
+ * it using jwt_decode, saves token to local storage and auth headers, sets current user
+ * 
+ * @param {Object} userData 
+ * 
+ */
 export const loginUser = userData => dispatch => {
   axios
     .post("/api/users/login", userData)
     .then(res => {
-      // Save to localStorage
-// Set token to localStorage
-      const { token } = res.data;
       
+
+      const { token } = res.data;
+      // Set token to localStorage
       localStorage.setItem("jwtToken", token);
       // Set token to Auth header
       setAuthToken(token);
@@ -42,20 +57,29 @@ export const loginUser = userData => dispatch => {
       })
     );
 };
+
 // Set logged in user
 export const setCurrentUser = decoded => {
+
   return {
     type: SET_CURRENT_USER,
     payload: decoded
   };
 };
+
+
 // User loading
 export const setUserLoading = () => {
   return {
     type: USER_LOADING
   };
 };
-// Log user out
+
+/**
+ * Logs out the user by deleting the JWT Token, removing it from header and
+ * setting current user to empty
+ * 
+ */
 export const logoutUser = () => dispatch => {
   // Remove token from local storage
   localStorage.removeItem("jwtToken");
