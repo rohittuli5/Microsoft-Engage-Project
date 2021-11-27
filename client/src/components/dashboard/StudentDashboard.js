@@ -1,40 +1,47 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import { connect } from "react-redux";
-import swal from 'sweetalert';
 import { logoutUser } from "../../actions/authActions";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 function StudentDashboard(props) {
 
     const [exam_code, setExamCode] = useState("");
     const [error, setError] = useState("");
+
     const axios = require("axios");
     const moment = require("moment");
     const history = useHistory();
+
+    /**
+     * This function is called when student enters exam code to start the exam
+     * It checks the exam code, if invalid it displays error
+     * If valid, it uses the start time and duration to find if exam is running or not
+     * If running it allows student to enter, else displays error
+     */
     function checkExamCode(){
-        let payload = { exam_code: exam_code};
-        const params = new URLSearchParams(payload);
+
+        // send exam code to server
         axios.get('/api/exams/examByCode?exam_code='+exam_code)
         .then(function (response) {
+            // if exam code is right
             console.log(response);
             let date_string = response.data.date_time_start;
-            
             const exam_date_time_start = new Date(date_string);
             const exam_date_time_end = moment(exam_date_time_start).add(response.data.duration, 'm').toDate();
             const curr_date_time = new Date();
-            console.log(exam_date_time_start);
-            console.log(exam_date_time_end);
-            console.log(curr_date_time);
 
+            // if exam has begun but not ended, then allow user to enter
             if(curr_date_time >= exam_date_time_start && curr_date_time < exam_date_time_end){
+                
+              // calculate time remaining
                 var diff = Math.abs(exam_date_time_end - curr_date_time);
                 var diff_mins = Math.floor((diff/1000)/60);
                 var diff_secs = Math.floor(diff/1000)%60;
                 console.log(diff, diff_mins, diff_secs);
                 setError("Starting exam");
+                // pass data to exam page and start the exam
                 let data={
                     exam_code: exam_code,
                     student_name: props.name,
@@ -47,18 +54,23 @@ function StudentDashboard(props) {
                 history.push({ 
                     pathname: '/test',
                     state: data
-                   })
+                })
                  
             }
+
+            // if current time is after exam end time, show error
             else if(curr_date_time >= exam_date_time_end){
                 setError("Exam has already ended");
             }
-            else {
 
+            // if current time is before exam start, show error
+            else {
                 setError("Exam has not started now");
             }
           })
+
           .catch(function (error) {
+            // if exam code is invalid show error
             console.log(error);
             setError("Exam code is invalid");
           });
