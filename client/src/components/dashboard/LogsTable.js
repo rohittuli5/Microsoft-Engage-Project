@@ -17,17 +17,19 @@ import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SearchBar from "material-ui-search-bar";
 
-import { Button, Grid } from '@mui/material';
-
 const axios = require('axios')
 
-
+/**
+ * Comparator function for descending sort
+ * @param {Comparator} a 
+ * @param {Comparator} b 
+ * @param {String} orderBy asc or desc
+ * @returns -1 if a>b, 1 if b>a 0 if equal
+ */
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -38,12 +40,19 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
+/**
+ * Creates ascending and decending comparator
+ * @param {String} order asc or desc
+ * @param {*} orderBy 
+ * @returns descendingComparator value (-1,0,1)
+ */
 function getComparator(order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
+// This function sorts an array given a comparator
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -54,8 +63,10 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+// Array of the header cells of the table
+// each element is an object containing that header cell's properties
 const headCells = [
-  { id: 's_no', numeric: false, disablePadding: true, label: 'S. No.' },
+  { id: 's_no', numeric: false, disablePadding: false, label: 'S. No.' },
   { id: 'student_name', numeric: false, disablePadding: false, label: 'Name' },
   { id: 'student_email', numeric: false, disablePadding: false, label: 'Email' },
   { id: 'tab_change_count', numeric: true, disablePadding: false, label: 'Tab Changes' },
@@ -66,8 +77,13 @@ const headCells = [
   { id: 'prohibited_object_found', numeric: false, disablePadding: false, label: 'Prohibited Object Found' },
 ];
 
+/**
+ * Creates the Table Head
+ * @param {Props} props 
+ * @returns rendering component
+ */
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -80,7 +96,7 @@ function EnhancedTableHead(props) {
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'default'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy===headCell.id ?order:false}
           >
             <TableSortLabel
@@ -168,7 +184,11 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-
+/**
+ * This function is the main function of this file
+ * It creates the whole table
+ * @returns renders the table
+ */
 export default function LogsTable() {
   const [exam_code, setExamCode] = React.useState("");
   const [visibility, setVisibility] = React.useState(false);
@@ -180,29 +200,35 @@ export default function LogsTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
-  const [interns,setInterns]=React.useState([]);
+  const [TableData,setTableData]=React.useState([]);
   const [searched, setSearched] = React.useState("");
 
 
-
+  /**
+   * Gets student logs from the server using the exam code and professor's email
+   * and updates the table
+   * 
+   */
   const getData=async ()=>{
     try {
-      const response = await axios.post('/api/logs/allData',{exam_code:exam_code});
 
+      const response = await axios.post('/api/logs/allData',{exam_code:exam_code});
+      // if response is empty either no student has taken the exam or the code is wrong
       if(response.data.length === 0){
-        setErrorText("Either there are no records for the exam or the exam code is Invalid!");
+        setErrorText("Either there are no records for the exam currently, or the exam code is Invalid!");
+        // make the table invisible and reset the variables
         setVisibility(false);
-        setInterns([]);
+        setTableData([]);
         setRows([]);
         return;
       }
       else{
-
+        // if there is a response remove the error message and make the table visible
         setErrorText("");
         setVisibility(true);
       }
       var curr_logs=[];
-
+      // loop over the response and store it in the state
       for(var i=0;i<response.data.length;i++){
       
         var obj=new Object();
@@ -218,7 +244,7 @@ export default function LogsTable() {
         curr_logs=[...curr_logs,obj]
         
       }
-      setInterns(curr_logs);
+      setTableData(curr_logs);
       setRows(curr_logs);
     }
     catch(err){
@@ -251,12 +277,15 @@ export default function LogsTable() {
     setPage(0);
   };
   
+  /**
+   * Filters rows based on the search string present in name or email of the student
+   * @param {String} searchVal 
+   */
   const requestSearch=(searchVal)=>{
-    console.log(searchVal);
-    const filteredRows=interns.filter((row)=>{
-      
-      if( row.student_name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
-      row.student_email.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) === true) {
+  
+    const filteredRows=TableData.filter((row)=>{
+      // for each row of data check if name or email contains the search string
+      if(row.student_name.toLowerCase().includes(searchVal.toLowerCase()) || row.student_email.toLowerCase().includes(searchVal.toLowerCase())) {
         
         return true;
       }
@@ -266,6 +295,9 @@ export default function LogsTable() {
     
 
   }
+  /**
+   * Cancels the search and sets the whole table to original position
+   */
   const cancelSearch=()=>{
     setSearched("");
     requestSearch(searched);
@@ -346,7 +378,7 @@ export default function LogsTable() {
                       key={row.s_no}
                     >
                       
-                      <TableCell component="th" id={labelId} scope="row" padding="3px">
+                      <TableCell component="th" id={labelId} scope="row" padding="normal">
                         {row.s_no}
                       </TableCell>
                       <TableCell align="left">{row.student_name}</TableCell>
@@ -357,8 +389,7 @@ export default function LogsTable() {
                       <TableCell align="left">{row.multiple_faces_found === true ? "Yes" : "No"}</TableCell>
                       <TableCell align="left">{row.mobile_found === true ?"Yes" : "No"}</TableCell>
                       <TableCell align="left">{row.prohibited_object_found === true ?"Yes" : "No"}</TableCell>
-                      {/*<TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewvulnerabilities(e,row.scan_id)}>View vulnerabilities</Button></TableCell>
-                  <TableCell align="left"><Button variant="contained" color="secondary" onClick={(e)=>handleRescan(e,row.scan_id, row.type)}>Rescan</Button></TableCell>*/}
+                      
                       
                     </TableRow>
                   );
@@ -377,8 +408,8 @@ export default function LogsTable() {
           count={rows.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
         
       </Paper>)}
