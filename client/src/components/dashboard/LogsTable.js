@@ -189,7 +189,7 @@ EnhancedTableToolbar.propTypes = {
  * It creates the whole table
  * @returns renders the table
  */
-export default function LogsTable() {
+export default function LogsTable(props) {
   const [exam_code, setExamCode] = React.useState("");
   const [visibility, setVisibility] = React.useState(false);
   const [error_text, setErrorText] = React.useState("");
@@ -211,22 +211,27 @@ export default function LogsTable() {
    */
   const getData=async ()=>{
     try {
-
+      // check if exam code is valid and it is one of professor's exams
+      axios.get('/api/exams/examsByProf?exam_code='+exam_code+'&prof_email='+props.prof_email)
+      .then(function (response) {
+          console.log(response);
+          // exam code valid, and permission is there so let it pass through
+      })
+      .catch(function (err) {
+          console.log(err);
+          // either exam code invalid or its not this professor's exam
+          setErrorText("Either exam code is invalid or you dont have permission");
+          // clear table and make it invisible.
+          setVisibility(false);
+          setTableData([]);
+          setRows([]);
+          return;
+      });
       const response = await axios.post('/api/logs/allData',{exam_code:exam_code});
-      // if response is empty either no student has taken the exam or the code is wrong
-      if(response.data.length === 0){
-        setErrorText("Either there are no records for the exam currently, or the exam code is Invalid!");
-        // make the table invisible and reset the variables
-        setVisibility(false);
-        setTableData([]);
-        setRows([]);
-        return;
-      }
-      else{
-        // if there is a response remove the error message and make the table visible
-        setErrorText("");
-        setVisibility(true);
-      }
+    
+      setErrorText("");
+      setVisibility(true);
+      
       var curr_logs=[];
       // loop over the response and store it in the state
       for(var i=0;i<response.data.length;i++){

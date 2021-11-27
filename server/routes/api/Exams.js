@@ -15,9 +15,8 @@ router.post("/createExam", (req, res) =>{
         return res.status(400).json(errors);
     }
 
-    Exam.findOne({code : req.body.exam_code}).then(exam=>{
-        // if user is already in database return error
-        // else if he is a new user create an account
+    Exam.findOne({exam_code : req.body.exam_code}).then(exam=>{
+        // if exam code is already present return error
         if(exam){
             return res.status(400).json({name: "Exam with this code exists in database"});
         }
@@ -55,11 +54,13 @@ router.get("/examByCode", (req, res) => {
 
 
 router.get("/examsByProf", (req, res) => {
-    Exam.find({ prof_email: req.body.prof_email}, function (err, docs) {
-        if(err){
-            return res.status(400).json("Error Occoured");
+    const req_exam_code=req.query.exam_code;
+    const req_prof_email=req.query.prof_email;
+    Exam.findOne({ prof_email: req_prof_email, exam_code: req_exam_code}).then(doc=> {
+        if(!doc){
+            return res.status(400).json("Exam doesn't exist or professor doesnt have permission");
         }
-        return res.status(200).json(docs);
+        return res.status(200).json(doc);
     });
 });
 

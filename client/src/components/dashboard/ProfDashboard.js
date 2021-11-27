@@ -88,6 +88,11 @@ function ProfDashboard(props) {
           setErrorText("Click Generate exam code to get an exam code first");
           return;
       }
+      var current_date_time = new Date();
+      if(date_time_start< current_date_time){
+        setErrorText("Please select a date and time of the future");
+        return;
+      }
       axios.post('/api/exams/createExam', {
           name: name,
           exam_link: exam_link,
@@ -163,7 +168,7 @@ function ProfDashboard(props) {
             </button>
             <br/>
             <br/>
-            <LogsTable exam_code={exam_code_search}/>
+            <LogsTable exam_code={exam_code_search} prof_email={props.prof_email}/>
             
 
             
