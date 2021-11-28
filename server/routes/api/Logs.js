@@ -2,17 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 const Logs = require("../../models/Logs");
-//const validateCheatingInput = require("../../validation/Cheating");
+/**
+ * post requests on /logs/update is made by the exam window every second
+ * if there exists no entry in the database corresponding to the given pair of exam_code and student_email
+ * it creates a new one, else it replaces the old one  
+ */
 router.post("/update", (req, res) =>{
 
-    // validate cheating data for errors
-    //const {errors, isValid} = validateCheatingInput(req.body);
-    const isValid=true;
-    // if there is some error return error code 400 with error description
-    if(!isValid){
-        return res.status(400).json(errors);
-    }
-    
     Logs.findOneAndUpdate({exam_code: req.body.exam_code, student_email:req.body.student_email}, req.body, {upsert: true}, function(err, doc) {
         if (err){
             return res.status(400).json("Error Occoured");
@@ -22,10 +18,15 @@ router.post("/update", (req, res) =>{
 
 });
 
+/**
+ * Get request on /logs/logByEmail with exam_code and student_email query parameters
+ * This request is made whenever student presses start exam button to check whether 
+ * student is taking this exam for the first time or if he exited and rejoined
+ */
 router.get("/logByEmail", (req, res) => {
     const req_exam_code = req.query.exam_code;
     const req_student_email = req.query.student_email;
-    console.log(req_exam_code, req_student_email);
+    
     Logs.findOne({ exam_code : req_exam_code, student_email: req_student_email }).then(log=>{
         
         if(!log){
@@ -34,6 +35,10 @@ router.get("/logByEmail", (req, res) => {
         return res.status(200).json(log);
     });
 }); 
+
+/**
+ * post request to get all student data for the given exam code
+ */
 router.post("/allData", (req,res) => {
     Logs.find({ exam_code: req.body.exam_code}, function (err, docs) {
         

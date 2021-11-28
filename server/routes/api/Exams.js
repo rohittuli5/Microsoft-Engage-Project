@@ -4,7 +4,12 @@ const router = express.Router();
 const Exam = require("../../models/Exams");
 const validateExamInput = require("../../validation/CreateExam");
 
-
+/**
+ * Post request on /createExam creates an exam
+ * First a custom validator validates the requests
+ * Then we try to check if same exam code is present. If not then
+ * we create the exam else we display error
+ */
 router.post("/createExam", (req, res) =>{
 
     // validate exam data for errors
@@ -41,6 +46,10 @@ router.post("/createExam", (req, res) =>{
 
 });
 
+/**
+ * Get requests on /examByCode with exam_code as the query parameter
+ * return exam object if exam code is correct else an error is raised
+ */
 router.get("/examByCode", (req, res) => {
     const req_exam_code=req.query.exam_code;
     Exam.findOne({ exam_code : req_exam_code}).then(exam=>{
@@ -52,7 +61,12 @@ router.get("/examByCode", (req, res) => {
     });
 }); 
 
-
+/**
+ * Get requests on /examByProf with exam_code and prof_email as query parameter
+ * return exam object if the exam code is correct and it was created by the professor
+ * with prof_email id
+ * else returns an error
+ */
 router.get("/examsByProf", (req, res) => {
     const req_exam_code=req.query.exam_code;
     const req_prof_email=req.query.prof_email;
@@ -64,4 +78,5 @@ router.get("/examsByProf", (req, res) => {
     });
 });
 
+// export the router
 module.exports = router;

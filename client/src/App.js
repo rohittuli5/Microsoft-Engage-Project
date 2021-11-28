@@ -35,6 +35,10 @@ if (localStorage.jwtToken) {
   }
 }
 
+/**
+ * Main component of the website which has a navbar on top of all pages
+ * and a router which displays the correct component based on URL
+ */
 class App extends Component {
   render() {
     return (

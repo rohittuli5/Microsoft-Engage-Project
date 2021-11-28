@@ -13,6 +13,12 @@ const validateLoginInput = require("../../validation/login");
 
 const User = require("../../models/Users");
 
+
+/**
+ * This api is used to register new users.
+ * If form data is invalid or email already exists in database it returns an error
+ * else it creates the account
+ */
 router.post("/register", (req, res) => {
     // validate registration data for errors
     const {errors, isValid} = validateRegisterInput(req.body);
@@ -104,5 +110,5 @@ router.post("/login", (req, res) => {
       });
     });
   });
-
+  // export the router
   module.exports = router;
